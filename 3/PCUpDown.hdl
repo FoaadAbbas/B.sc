@@ -1,0 +1,20 @@
+/**
+ * A 16-bit counter with load and reset control bits, and up control bit.
+ * the up control bit control if the inc icrement or decrement
+ * if      (reset[t] == 1) out[t+1] = 0
+ * else if (load[t] == 1)  out[t+1] = in[t]
+ * else if (inc[t] == 1)   if (up[t]==1) out[t+1]=out[t]+1  else out[t+1]=out[t]-1
+ * else                    out[t+1] = out[t]
+ */
+
+CHIP PCUpDown {
+   IN in[16],load,inc,reset, up;
+   OUT out[16];
+   PARTS:
+   Inc16(in = loop , out = PlusOne);
+   Dec16(in = loop , out = MinusOne);
+   Mux4Way16(a = loop , b = MinusOne , c = loop , d = PlusOne , sel[0] = inc , sel[1] = up , out = UpPc);
+   Mux16(a = UpPc , b = in , sel = load , out = LoadPc);
+   Mux16(a = LoadPc , b = false , sel = reset , out = ResetPc);
+   Register(in = ResetPc , load = true , out = loop , out = out);
+}

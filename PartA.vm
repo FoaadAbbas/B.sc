@@ -1,0 +1,69 @@
+
+//ab=0
+push constant 0
+pop static 3
+//n=1
+push constant 1
+pop static 5
+//k==1
+push constant 1
+pop static 6
+//while(n<=b)
+label multiply
+push static 5
+push static 1
+gt
+if-goto end
+//ab+=a
+push static 3
+push static 0
+add
+pop static 3
+//n++
+push static 5
+push constant 1
+add
+pop static 5
+goto multiply
+label end
+//kab=0
+push constant 0
+pop static 4
+label dowhile
+push static 4//kab
+push static 3//ab
+add
+pop static 4//kab
+
+//the modulus is in temp 0
+push static 4//kab
+pop temp 0
+label subloop
+//if kab<c
+push temp 0
+push static 2
+lt
+if-goto endsub
+//temp-=c
+push temp 0
+push static 2
+sub
+pop temp 0
+goto subloop
+label endsub
+push temp 0
+push constant 1
+eq
+if-goto endprogram
+push constant 1
+push static 6 
+add //k++
+pop static 6
+goto dowhile
+label endprogram
+push static 4
+label wait
+goto wait
+
+
+
