@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת מעקב רפואי - חוות סוסים</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #e0e0e0;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-section {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .form-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .horses-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .horse-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .horse-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .horse-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .horse-card h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .horse-info {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .records-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .records-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .records-table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: auto;
+        }
+        
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card p {
+            font-size: 1.1em;
+        }
+        
+        .pregnancy-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .pregnancy-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .pregnancy-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .info-item strong {
+            color: #667eea;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐴 מערכת מעקב רפואי - חוות סוסים</h1>
+            <p>ניהול מקיף של בריאות הסוסים בחווה</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('horses', event)">ניהול סוסים</button>
+            <button class="tab" onclick="showTab('visits', event)">ביקורי רופאים</button>
+            <button class="tab" onclick="showTab('vaccines', event)">חיסונים</button>
+            <button class="tab" onclick="showTab('pregnancy', event)">מעקב הריון</button>
+        </div>
+        
+        <div class="content">
+            <div id="horses" class="tab-content active">
+                <div class="form-section">
+                    <h3>הוסף סוס חדש</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="horseName">שם הסוס</label>
+                            <input type="text" id="horseName" placeholder="שם הסוס">
+                        </div>
+                        <div class="form-group">
+                            <label for="horseAge">גיל</label>
+                            <input type="number" id="horseAge" placeholder="גיל">
+                        </div>
+                        <div class="form-group">
+                            <label for="horseBreed">גזע</label>
+                            <input type="text" id="horseBreed" placeholder="גזע">
+                        </div>
+                        <div class="form-group">
+                            <label for="horseGender">מין</label>
+                            <select id="horseGender">
+                                <option value="זכר">זכר</option>
+                                <option value="נקבה">נקבה</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addHorse()">הוסף סוס</button>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="totalHorses">0</h3>
+                        <p>סה"כ סוסים</p>
+                    </div>
+                </div>
+                
+                <div id="horsesList" class="horses-list"></div>
+            </div>
+            
+            <div id="visits" class="tab-content">
+                <div class="form-section">
+                    <h3>רשום ביקור רופא</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="visitHorse">בחר סוס</label>
+                            <select id="visitHorse"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="visitDate">תאריך ביקור</label>
+                            <input type="date" id="visitDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="vetName">שם הרופא</label>
+                            <input type="text" id="vetName" placeholder="שם הרופא">
+                        </div>
+                        <div class="form-group">
+                            <label for="visitType">סוג הביקור</label>
+                            <select id="visitType">
+                                <option value="בדיקה שגרתית">בדיקה שגרתית</option>
+                                <option value="טיפול">טיפול</option>
+                                <option value="חירום">חירום</option>
+                                <option value="ניתוח">ניתוח</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="visitNotes">אבחון וטיפול</label>
+                        <textarea id="visitNotes" placeholder="פרטי הביקור, אבחון וטיפול..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="addVisit()">שמור ביקור</button>
+                </div>
+                
+                <h3 style="margin-bottom: 20px;">היסטוריית ביקורים</h3>
+                <div id="visitsList"></div>
+            </div>
+            
+            <div id="vaccines" class="tab-content">
+                <div class="form-section">
+                    <h3>רשום חיסון</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="vaccineHorse">בחר סוס</label>
+                            <select id="vaccineHorse"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vaccineDate">תאריך חיסון</label>
+                            <input type="date" id="vaccineDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="vaccineType">סוג חיסון</label>
+                            <input type="text" id="vaccineType" placeholder="למשל: שפעת, טטנוס">
+                        </div>
+                        <div class="form-group">
+                            <label for="nextVaccineDate">תאריך חיסון הבא</label>
+                            <input type="date" id="nextVaccineDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccineNotes">הערות</label>
+                        <textarea id="vaccineNotes" placeholder="הערות נוספות..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="addVaccine()">שמור חיסון</button>
+                </div>
+                
+                <h3 style="margin-bottom: 20px;">רשומות חיסונים</h3>
+                <div id="vaccinesList"></div>
+            </div>
+            
+            <div id="pregnancy" class="tab-content">
+                <div class="form-section">
+                    <h3>הוסף מעקב הריון</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="pregnantHorse">בחר סוסה</label>
+                            <select id="pregnantHorse"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="matingDate">תאריך הזדווגות</label>
+                            <input type="date" id="matingDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="dueDate">תאריך לידה משוער</label>
+                            <input type="date" id="dueDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="pregnancyStatus">סטטוס</label>
+                            <select id="pregnancyStatus">
+                                <option value="בהריון">בהריון</option>
+                                <option value="ילדה">ילדה</option>
+                                <option value="הפלה">הפלה</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pregnancyNotes">הערות מעקב</label>
+                        <textarea id="pregnancyNotes" placeholder="הערות על ההריון..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="addPregnancy()">שמור מעקב</button>
+                </div>
+                
+                <h3 style="margin-bottom: 20px;">מעקבי הריון פעילים</h3>
+                <div id="pregnancyList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Default data structure
+        let data = {
+            horses: [],
+            visits: [],
+            vaccines: [],
+            pregnancies: []
+        };
+
+        // --- Data Persistence ---
+        function saveData() {
+            localStorage.setItem('horseFarmData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const savedData = localStorage.getItem('horseFarmData');
+            if (savedData) {
+                data = JSON.parse(savedData);
+            }
+        }
+        
+        // --- Page Initialization ---
+        window.onload = function() {
+            loadData();
+            updateAllDisplays();
+            document.getElementById('visitDate').valueAsDate = new Date();
+            document.getElementById('vaccineDate').valueAsDate = new Date();
+        };
+
+        function updateAllDisplays() {
+            updateHorsesDisplay();
+            updateVisitsDisplay();
+            updateVaccinesDisplay();
+            updatePregnancyDisplay();
+            updateHorseSelects();
+            updateStats();
+        }
+        
+        function showTab(tabName, event) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            updateHorseSelects();
+        }
+
+        function updateStats() {
+            document.getElementById('totalHorses').textContent = data.horses.length;
+        }
+        
+        // --- Horses Management ---
+        function addHorse() {
+            const name = document.getElementById('horseName').value.trim();
+            const age = document.getElementById('horseAge').value;
+            const breed = document.getElementById('horseBreed').value.trim();
+            const gender = document.getElementById('horseGender').value;
+            
+            if (!name || !age) {
+                alert('נא למלא לפחות שם וגיל');
+                return;
+            }
+            
+            const horse = {
+                id: Date.now(),
+                name,
+                age,
+                breed,
+                gender
+            };
+            
+            data.horses.push(horse);
+            saveData();
+            
+            document.getElementById('horseName').value = '';
+            document.getElementById('horseAge').value = '';
+            document.getElementById('horseBreed').value = '';
+            
+            updateHorsesDisplay();
+            updateHorseSelects();
+            updateStats();
+        }
+        
+        function deleteHorse(id) {
+            if (confirm('האם אתה בטוח שברצונך למחוק סוס זה? פעולה זו תמחק גם את כל הרישומים המשויכים אליו (ביקורים, חיסונים וכו\').')) {
+                data.horses = data.horses.filter(h => h.id !== id);
+                // Also delete associated records
+                data.visits = data.visits.filter(v => v.horseId !== id);
+                data.vaccines = data.vaccines.filter(v => v.horseId !== id);
+                data.pregnancies = data.pregnancies.filter(p => p.horseId !== id);
+
+                saveData();
+                updateAllDisplays();
+            }
+        }
+        
+        function updateHorsesDisplay() {
+            const container = document.getElementById('horsesList');
+            if (data.horses.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>עדיין לא נוספו סוסים</p></div>';
+                return;
+            }
+            container.innerHTML = data.horses.map(horse => `
+                <div class="horse-card">
+                    <div>
+                        <h4>${horse.name}</h4>
+                        <div class="horse-info">
+                            <p><strong>גיל:</strong> ${horse.age}</p>
+                            <p><strong>גזע:</strong> ${horse.breed || 'לא צוין'}</p>
+                            <p><strong>מין:</strong> ${horse.gender}</p>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteHorse(${horse.id})">מחק</button>
+                </div>
+            `).join('');
+        }
+        
+        function updateHorseSelects() {
+            const allSelects = ['visitHorse', 'vaccineHorse'];
+            const femaleSelect = document.getElementById('pregnantHorse');
+
+            allSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">בחר סוס...</option>' + 
+                    data.horses.map(h => `<option value="${h.id}">${h.name}</option>`).join('');
+                select.value = currentVal;
+            });
+
+            const femaleHorses = data.horses.filter(h => h.gender === 'נקבה');
+            const currentFemaleVal = femaleSelect.value;
+            femaleSelect.innerHTML = '<option value="">בחר סוסה...</option>' +
+                femaleHorses.map(h => `<option value="${h.id}">${h.name}</option>`).join('');
+            femaleSelect.value = currentFemaleVal;
+        }
+        
+        // --- Visits Management ---
+        function addVisit() {
+            const horseId = parseInt(document.getElementById('visitHorse').value);
+            const date = document.getElementById('visitDate').value;
+            const vetName = document.getElementById('vetName').value.trim();
+            const type = document.getElementById('visitType').value;
+            const notes = document.getElementById('visitNotes').value.trim();
+            
+            if (!horseId || !date || !vetName) {
+                alert('נא למלא את כל השדות החובה (סוס, תאריך, שם רופא)');
+                return;
+            }
+            
+            const horse = data.horses.find(h => h.id === horseId);
+            
+            const visit = {
+                id: Date.now(),
+                horseId,
+                horseName: horse.name,
+                date,
+                vetName,
+                type,
+                notes
+            };
+            
+            data.visits.push(visit);
+            saveData();
+            
+            document.getElementById('visitHorse').value = '';
+            document.getElementById('vetName').value = '';
+            document.getElementById('visitNotes').value = '';
+            
+            updateVisitsDisplay();
+        }
+        
+        function deleteVisit(id) {
+            if (confirm('האם למחוק רישום ביקור זה?')) {
+                data.visits = data.visits.filter(v => v.id !== id);
+                saveData();
+                updateVisitsDisplay();
+            }
+        }
+        
+        function updateVisitsDisplay() {
+            const container = document.getElementById('visitsList');
+            if (data.visits.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>עדיין לא נרשמו ביקורים</p></div>';
+                return;
+            }
+            const sorted = [...data.visits].sort((a, b) => new Date(b.date) - new Date(a.date));
+            container.innerHTML = `
+                <table class="records-table">
+                    <thead><tr><th>תאריך</th><th>סוס</th><th>רופא</th><th>סוג ביקור</th><th>פרטים</th><th>פעולות</th></tr></thead>
+                    <tbody>
+                        ${sorted.map(v => `
+                            <tr>
+                                <td>${new Date(v.date).toLocaleDateString('he-IL')}</td>
+                                <td>${v.horseName}</td>
+                                <td>${v.vetName}</td>
+                                <td>${v.type}</td>
+                                <td>${v.notes}</td>
+                                <td><button class="delete-btn" onclick="deleteVisit(${v.id})">מחק</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+        }
+        
+        // --- Vaccines Management ---
+        function addVaccine() {
+            const horseId = parseInt(document.getElementById('vaccineHorse').value);
+            const date = document.getElementById('vaccineDate').value;
+            const type = document.getElementById('vaccineType').value.trim();
+            const nextDate = document.getElementById('nextVaccineDate').value;
+            const notes = document.getElementById('vaccineNotes').value.trim();
+            
+            if (!horseId || !date || !type) {
+                alert('נא למלא את כל השדות החובה (סוס, תאריך, סוג חיסון)');
+                return;
+            }
+            
+            const horse = data.horses.find(h => h.id === horseId);
+            
+            const vaccine = {
+                id: Date.now(),
+                horseId,
+                horseName: horse.name,
+                date,
+                type,
+                nextDate,
+                notes
+            };
+            
+            data.vaccines.push(vaccine);
+            saveData();
+            
+            document.getElementById('vaccineHorse').value = '';
+            document.getElementById('vaccineType').value = '';
+            document.getElementById('nextVaccineDate').value = '';
+            document.getElementById('vaccineNotes').value = '';
+            
+            updateVaccinesDisplay();
+        }
+        
+        function deleteVaccine(id) {
+            if (confirm('האם למחוק רישום חיסון זה?')) {
+                data.vaccines = data.vaccines.filter(v => v.id !== id);
+                saveData();
+                updateVaccinesDisplay();
+            }
+        }
+        
+        function updateVaccinesDisplay() {
+            const container = document.getElementById('vaccinesList');
+            if (data.vaccines.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>עדיין לא נרשמו חיסונים</p></div>';
+                return;
+            }
+            const sorted = [...data.vaccines].sort((a, b) => new Date(b.date) - new Date(a.date));
+            container.innerHTML = `
+                <table class="records-table">
+                    <thead><tr><th>תאריך</th><th>סוס</th><th>סוג חיסון</th><th>חיסון הבא</th><th>הערות</th><th>פעולות</th></tr></thead>
+                    <tbody>
+                        ${sorted.map(v => `
+                            <tr>
+                                <td>${new Date(v.date).toLocaleDateString('he-IL')}</td>
+                                <td>${v.horseName}</td>
+                                <td>${v.type}</td>
+                                <td>${v.nextDate ? new Date(v.nextDate).toLocaleDateString('he-IL') : '-'}</td>
+                                <td>${v.notes || '-'}</td>
+                                <td><button class="delete-btn" onclick="deleteVaccine(${v.id})">מחק</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+        }
+        
+        // --- Pregnancy Management ---
+        function addPregnancy() {
+            const horseId = parseInt(document.getElementById('pregnantHorse').value);
+            const matingDate = document.getElementById('matingDate').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const status = document.getElementById('pregnancyStatus').value;
+            const notes = document.getElementById('pregnancyNotes').value.trim();
+            
+            if (!horseId || !matingDate || !dueDate) {
+                alert('נא למלא את כל השדות החובה (סוסה, תאריך הזדווגות, תאריך לידה משוער)');
+                return;
+            }
+            
+            const horse = data.horses.find(h => h.id === horseId);
+            
+            const pregnancy = {
+                id: Date.now(),
+                horseId,
+                horseName: horse.name,
+                matingDate,
+                dueDate,
+                status,
+                notes
+            };
+            
+            data.pregnancies.push(pregnancy);
+            saveData();
+            
+            document.getElementById('pregnantHorse').value = '';
+            document.getElementById('matingDate').value = '';
+            document.getElementById('dueDate').value = '';
+            document.getElementById('pregnancyNotes').value = '';
+            
+            updatePregnancyDisplay();
+        }
+        
+        function deletePregnancy(id) {
+            if (confirm('האם למחוק מעקב הריון זה?')) {
+                data.pregnancies = data.pregnancies.filter(p => p.id !== id);
+                saveData();
+                updatePregnancyDisplay();
+            }
+        }
+        
+        function updatePregnancyDisplay() {
+            const container = document.getElementById('pregnancyList');
+            const activePregnancies = data.pregnancies.filter(p => p.status === 'בהריון');
+
+            if (activePregnancies.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>אין מעקבי הריון פעילים</p></div>';
+                return;
+            }
+            
+            container.innerHTML = activePregnancies.map(p => {
+                const today = new Date();
+                const due = new Date(p.dueDate);
+                const mating = new Date(p.matingDate);
+                const totalDays = 340; // Average pregnancy duration for a mare
+                const daysPassed = Math.max(0, Math.floor((today - mating) / (1000 * 60 * 60 * 24)));
+                const daysLeft = Math.max(0, Math.floor((due - today) / (1000 * 60 * 60 * 24)));
+                const progress = Math.min(Math.round((daysPassed / totalDays) * 100), 100);
+                
+                return `
+                    <div class="pregnancy-card">
+                        <h4>${p.horseName} <button class="delete-btn" style="float: left;" onclick="deletePregnancy(${p.id})">מחק</button></h4>
+                        <div class="pregnancy-info">
+                            <div class="info-item"><strong>ת. הזדווגות:</strong><br>${new Date(p.matingDate).toLocaleDateString('he-IL')}</div>
+                            <div class="info-item"><strong>לידה משוערת:</strong><br>${new Date(p.dueDate).toLocaleDateString('he-IL')}</div>
+                            <div class="info-item"><strong>ימים עד ללידה:</strong><br>${daysLeft > 0 ? daysLeft : 'עבר המועד'}</div>
+                            <div class="info-item"><strong>סטטוס:</strong><br>${p.status}</div>
+                        </div>
+                        <div>
+                            <strong>התקדמות הריון (${daysPassed} ימים):</strong>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <small style="text-align: center; display: block; margin-top: 5px;">${progress}%</small>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
