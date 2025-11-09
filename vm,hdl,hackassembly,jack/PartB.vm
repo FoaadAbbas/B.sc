@@ -1,0 +1,87 @@
+//main function
+function PartB.main 0
+//pushing constants
+push constant 11
+push constant 5
+push constant 7
+push constant 0
+push constant 0
+push constant 1
+push constant 1
+push constant 0
+
+//calling function compute_kab
+call PartB.compute_kab 8
+pop static 0
+label LOOP
+goto LOOP
+
+function PartB.compute_kab 1
+// while n<a
+label multiply
+push argument 5//push n
+push argument 1//push b
+gt
+if-goto end
+
+//ab=ab+b
+push argument 3 //ab
+push argument 0 //a
+add
+pop argument 3//ab
+
+//n=n+1
+push argument 5//n
+push constant 1
+add
+pop argument 5//n
+goto multiply
+label end
+
+
+label dowhile
+//kab=kab+ab
+push argument 4//kab
+push argument 3//ab
+add
+pop argument 4//kab
+
+//the modulu is in temp 0
+push argument 4//kab
+//copy kab to local
+pop local 0
+
+label subloop
+push local 0//kab
+push argument 2//c
+lt //if kab<c
+if-goto endsub
+//temp=temp-c
+push local 0//kab
+push argument 2//c
+sub
+pop local 0//kab
+goto subloop
+label endsub
+
+//j=1
+push constant 1
+pop argument 6// the 1
+
+push argument 6//1
+push local 0// the modulu
+eq
+
+//k=k+1
+push constant 1
+push argument 7
+add
+pop argument 7
+
+//if (j==temp0) stop
+if-goto endprogram
+goto dowhile
+label endprogram
+push argument 4
+return
+

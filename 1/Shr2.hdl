@@ -1,9 +1,0 @@
-// Sign preserving shift right of two bits 
-CHIP Shr2 {
-    //out[15] = in[15] , out[14] = in[14] ,and for other x's its out[x] = in[x + 2]
-    IN in[16];
-    OUT out[16];
-    PARTS:
-	Shr1(in = in, out = out1);//2 times right shift 
-    Shr1(in = out1 , out = out);
-}

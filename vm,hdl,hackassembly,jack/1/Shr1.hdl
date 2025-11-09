@@ -1,0 +1,8 @@
+ // Sign preserving shift right of one bit 
+CHIP Shr1 {
+    IN in[16];
+    OUT out[16];
+    PARTS:
+    //out[15] = in[15] , and for other x's its out[x] = in[x + 1]
+    Mux16(a[15] = in[15] , a[0..14] = in[1..15],sel  = false, out = out);
+}

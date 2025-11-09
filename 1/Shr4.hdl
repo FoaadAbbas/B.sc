@@ -1,9 +1,0 @@
-// Sign preserving shift right of four bits 
-CHIP Shr4 {
-    //for 15 >= x >= 12 : out[x] = in[15] for other x's its out[x] = in[x + 4]
-    IN in[16];
-    OUT out[16];
-    PARTS:
-    Shr2(in = in , out = out1);//4 times right shift
-    Shr2(in = out1 , out = out);
-}
