@@ -1,0 +1,9 @@
+// Sign preserving shift right of two bits 
+CHIP Shr8 {
+    IN in[16];
+    OUT out[16];
+    //for 15 >= x >= 8 out[x] = in[15] , else out[x] = in[x + 8]
+    PARTS:
+	Shr4(in = in , out = out1);//8 times right shift
+    Shr4(in = out1 , out = out);
+}

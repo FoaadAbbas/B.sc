@@ -1,0 +1,9 @@
+CHIP Not4{
+    IN a[4];
+    OUT b[4];
+    PARTS:
+    Not(in = a[0], out = b[0]);
+    Not(in = a[1], out = b[1]);
+    Not(in = a[2], out = b[2]);
+    Not(in = a[3], out = b[3]);
+}

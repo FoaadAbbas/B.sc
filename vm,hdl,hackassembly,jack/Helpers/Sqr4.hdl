@@ -1,0 +1,17 @@
+CHIP Sqr4{
+    IN in[4];
+    OUT out[8];
+    PARTS:
+    a4to8(in = in , out = a8);
+    Shift8(in = a8 , out = out1);
+    Mux8(a = false, b = out1, sel = in[0], out = number1);
+    Shift8(in = a8 , out = out2);
+    Mux8(a = false , b = out2 , sel = in[1], out = number2);
+    Shift8(in = a8 , out = out3);
+    Mux8(a = false , b = out3 , sel = in[2] , out = number3);
+    Shift8(in = a8 ,out = out4);
+    Mux8(a = false , b = out4 , sel = in[3] , out = number4);
+    Add8(a = number1 , b = number2 , out = out12);
+    Add8(a = out12 , b = number3 , out = out123);
+    Add8(a = out123 , b = number4 , out = out);
+}

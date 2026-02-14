@@ -1,0 +1,38 @@
+//x = 98
+push constant 98
+pop static 0
+//y = 3
+push constant 3
+pop static 1
+//q = 0
+push constant 0
+pop static 2
+//v = x - y
+push static 0
+push static 1
+sub
+pop static 3
+label WHILE
+//if v < 0 jump to after while
+push constant 0
+push static 3
+lt
+if-goto afterWhile
+//q++
+push static 2
+push constant 1
+add
+pop static 2
+//v -= y
+push static 3
+push static 1
+sub
+push static 3
+label afterWhile
+//rem = v + y
+push static 3
+push static 1
+add
+pop static 4
+label wait
+goto wait

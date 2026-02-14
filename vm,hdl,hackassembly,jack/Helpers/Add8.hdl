@@ -1,0 +1,6 @@
+CHIP Add8{
+    IN a[8] , b[8];
+    OUT out[8];
+    PARTS:
+    And16(a[0..7] = a, b[0..7] = b, out[0..7] = out);
+}

@@ -1,0 +1,55 @@
+// sqroot1.vm
+
+//int main()
+//{
+function sqroot1.main 2
+//      int n, sqrtn;
+// local   0   1
+//  printf("Enter n: ");
+//  scanf("%d", &n);
+push constant 49
+pop static 0
+push static 0
+//  sqrtn = mysqrt(n);
+call sqroot1.mysqrt 1
+//  printf("%d * %d = %d\n", sqrtn, sqrtn, sqrtn * sqrtn);
+pop static 1
+return
+// } // 
+function sqroot1.mysqrt 3
+//n - argument 0
+//i - local 0
+//sqrtn - local 1
+//sum - local 2
+push constant 0
+pop local 1 //sqrtn = 0
+push constant 1
+pop local 2 //sum = 1
+label WHILE
+push argument 0
+push local 2
+gt //if n <= sum we leave the while
+not
+if-goto after_while
+push local 1
+push constant 1
+add 
+pop local 1
+push constant 0
+pop local 2
+goto for
+push constant 0
+pop local 0 //i = 0 again
+label for
+push local 1
+push local 0
+lt
+if-goto WHILE
+push local 2
+push local 1
+add
+pop local 2
+goto for //going back to for until sqrtn < i
+label after_while
+push local 1
+return //return sqrtn 

@@ -1,0 +1,7 @@
+CHIP iszero4{
+    IN a[4];
+    OUT isZero;
+    PARTS:
+    Or8Way(in[0..3] = a, out = out1);
+    Not(in = out1, out = isZero);
+}

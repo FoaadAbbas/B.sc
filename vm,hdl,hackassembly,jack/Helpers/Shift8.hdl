@@ -1,0 +1,6 @@
+CHIP Shift8{
+    IN in[8];
+    OUT out[8];
+    PARTS:  
+    Mux16(a[0] = false, a[1..7] = in[0..6], sel = false, out[0..7] = out);
+}
